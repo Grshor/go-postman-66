@@ -8,6 +8,10 @@ Translate your Go route registrations into a ready-to-import
 picks up handler doc comments as request descriptions, converts path patterns
 to Postman path variables, and writes a deterministic JSON collection.
 
+> **Origin:** this is an open-source reimplementation of a handler→Postman
+> documentation codegen I originally built for the Kangaroo marketplace
+> backend, where it kept API docs and collections in sync with the code.
+
 ## Install
 
 ```sh
