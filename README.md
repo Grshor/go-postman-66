@@ -48,6 +48,20 @@ Warnings (e.g. skipped non-literal patterns) go to stderr and never fail the run
 Handler doc comments (`// Lists all users…` above the function) become request
 descriptions in Postman.
 
+## Design note: static scan vs runtime reflection
+
+The original version of this idea (built for a production fiber app) worked at
+**runtime**: it walked the live router's route table, so what it emitted was
+exactly what the server served — groups, prefixes and dynamically built
+routes included. The cost: it needed a constructible app instance and was
+locked to one framework.
+
+This tool makes the opposite trade: it reads source at rest, so it runs in CI
+on any repo without starting anything and doesn't care which router you use —
+but it can only see routes that appear literally in the code. Dynamically
+generated patterns (loops, computed prefixes, `.Methods()` chains) are out of
+reach for a scanner.
+
 ## Limitations (v0.1, on purpose)
 
 - Path patterns must be string literals; anything computed is skipped with a
@@ -55,6 +69,8 @@ descriptions in Postman.
 - Route groups/prefixes (`gin.Group`, nested muxes) are not flattened yet.
 - Anonymous handlers (`FuncLit`) carry no description — there is no function to
   read a comment from.
+- A `-runtime` mode (import the target app, dump `GetRoutes()`-style route
+  tables) could recover dynamic routes; PRs welcome.
 
 ## Example output
 
